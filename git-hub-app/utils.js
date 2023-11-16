@@ -24,7 +24,7 @@ module.exports = async function getRepoIssues (owner, repo) {
     let list_of_issues_details = []
 
     for (let issue of data) {
-        list_of_issues_details = {
+        const list_of_issues_detail = {
             'id': issue['id'],
             'html_url': issue['html_url'],
             'title': issue['title'],
@@ -32,10 +32,8 @@ module.exports = async function getRepoIssues (owner, repo) {
             'user': issue['user']['login'],
             'created_at': issue['created_at']
         }
+        list_of_issues_details = list_of_issues_details.concat(list_of_issues_detail)
     }
-
-
-
 
     // Save the data to a JSON file
     fs.writeFileSync(`issue-data-${owner}-${repo}.json`, JSON.stringify(list_of_issues_details, null, 2));

@@ -1,0 +1,35 @@
+{
+  "name": "hasselFreePr",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An app that uses AI to manage duplicate issues and pull requests.",
+  "author": "David Anyatonwu",
+  "license": "ISC",
+  "homepage": "https://github.com//",
+  "keywords": [
+    "probot",
+    "github",
+    "probot-app"
+  ],
+  "scripts": {
+    "start": "probot run ./index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "langchain": "^0.0.189",
+    "openai": "^4.19.0",
+    "probot": "^12.2.4"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "nock": "^13.0.5",
+    "smee-client": "^1.2.2"
+  },
+  "engines": {
+    "node": ">= 10.13.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

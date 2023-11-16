@@ -1,0 +1,80 @@
+{
+  "action": "created",
+  "installation": {
+    "id": 44078123,
+    "account": {
+      "login": "onyedikachi-david",
+      "id": 51977119,
+      "node_id": "MDQ6VXNlcjUxOTc3MTE5",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51977119?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/onyedikachi-david",
+      "html_url": "https://github.com/onyedikachi-david",
+      "followers_url": "https://api.github.com/users/onyedikachi-david/followers",
+      "following_url": "https://api.github.com/users/onyedikachi-david/following{/other_user}",
+      "gists_url": "https://api.github.com/users/onyedikachi-david/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/onyedikachi-david/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/onyedikachi-david/subscriptions",
+      "organizations_url": "https://api.github.com/users/onyedikachi-david/orgs",
+      "repos_url": "https://api.github.com/users/onyedikachi-david/repos",
+      "events_url": "https://api.github.com/users/onyedikachi-david/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/onyedikachi-david/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "repository_selection": "selected",
+    "access_tokens_url": "https://api.github.com/app/installations/44078123/access_tokens",
+    "repositories_url": "https://api.github.com/installation/repositories",
+    "html_url": "https://github.com/settings/installations/44078123",
+    "app_id": 481781,
+    "app_slug": "hasselfreepr",
+    "target_id": 51977119,
+    "target_type": "User",
+    "permissions": {
+      "issues": "write",
+      "metadata": "read"
+    },
+    "events": [
+      "issues"
+    ],
+    "created_at": "2023-11-16T10:28:33.000+01:00",
+    "updated_at": "2023-11-16T10:28:34.000+01:00",
+    "single_file_name": null,
+    "has_multiple_single_files": false,
+    "single_file_paths": [
+
+    ],
+    "suspended_by": null,
+    "suspended_at": null
+  },
+  "repositories": [
+    {
+      "id": 705655317,
+      "node_id": "R_kgDOKg9yFQ",
+      "name": "ajodao",
+      "full_name": "onyedikachi-david/ajodao",
+      "private": false
+    }
+  ],
+  "requester": null,
+  "sender": {
+    "login": "onyedikachi-david",
+    "id": 51977119,
+    "node_id": "MDQ6VXNlcjUxOTc3MTE5",
+    "avatar_url": "https://avatars.githubusercontent.com/u/51977119?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/onyedikachi-david",
+    "html_url": "https://github.com/onyedikachi-david",
+    "followers_url": "https://api.github.com/users/onyedikachi-david/followers",
+    "following_url": "https://api.github.com/users/onyedikachi-david/following{/other_user}",
+    "gists_url": "https://api.github.com/users/onyedikachi-david/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/onyedikachi-david/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/onyedikachi-david/subscriptions",
+    "organizations_url": "https://api.github.com/users/onyedikachi-david/orgs",
+    "repos_url": "https://api.github.com/users/onyedikachi-david/repos",
+    "events_url": "https://api.github.com/users/onyedikachi-david/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/onyedikachi-david/received_events",
+    "type": "User",
+    "site_admin": false
+  }
+}

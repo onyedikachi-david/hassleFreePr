@@ -1,29 +1,86 @@
-// import { ChatOpenAI } from 'langchain/chat_models/openai'
-// import { PromptTemplate } from 'langchain/prompts'
-
 const {ChatOpenAI} = require('langchain/chat_models/openai')
 const { PromptTemplate } = require('langchain/prompts')
 const {StringOutputParser} = require('langchain/schema/output_parser')
 const {RunnablePassthrough, RunnableSequence} = require("langchain/schema/runnable")
+const {createClient} = require("@supabase/supabase-js");
+const {SupabaseVectorStore} = require("langchain/vectorstores/supabase");
+const {OpenAIEmbeddings} = require("langchain/embeddings/openai");
 
-const issue_template = `
-You are an AI assistant helping triage GitHub issues.
-Issue details: {issue}
-If this issue already exists, find the existing issue and comment on it with a link back to this one. 
-Also identify any related issues or pull requests and comment with links to those.
-If this is a new issue, create it and try to find any potentially related existing issues or pull requests to reference in a comment.
-Response: `
+const simplifyIssueTemplate = `
+  Given an issue:
 
-const pr_template = `
-You are an AI assistant helping triage GitHub pull requests.
-Pull request details: {pr}
-If this pull request already exists, find it and comment linking any related issues or other pull requests.
-If this is a new pull request, create it and identify any issues it would close. Comment on the PR with a list of issues closed.
-Response: `
+  \`{issue}\`
+  
+  Simplify the issue to contain just a summary of the key details. Include:
+  
+  - issue title
+  - issue body
+  
+  Simplified issue:
+`
+const issueTemplate = `
+  You are an AI assistant helping out in GitHub issues.
 
-const issue_prompt = PromptTemplate(issue_template)
-const pr_prompt = PromptTemplate(pr_template)
+  Issue details: {issue}
+
+  Check if this issue exists in the context.
+
+  If it does:
+    - Give a simplified Markdown response with:
+      - [Issue title](Issue URL)
+
+  If it does not:
+    - Do not add a comment
+  
+  Context: {context}
+
+  Response:
+`
+
+const prTemplate = `
+  You are an AI assistant helping out with GitHub pull requests.
+
+  Pull request details: {pr}
+
+  Check if this pull request exists in the context.
+
+  If it does:
+    - Do not add a comment
+
+  If it does not:
+    - Identify any issues this PR would close
+    - Give a Markdown formatted response with links to the closing issues
+  
+  Context: {context}
+
+  Response:  
+`
+
+// const pr_prompt = PromptTemplate(pr_template)
 
 
 const openAIApiKey = process.env.OPENAI_API_KEY
 const llm = new ChatOpenAI({ openAIApiKey })
+
+module.exports = async function aiAssistant() {
+
+    // console.log(response)
+    const sbApiKey = process.env.SUPABASE_API_KEY;
+    const sbUrl = process.env.SUPABASE_URL;
+    const openAIApiKey = process.env.OPENAI_API_KEY;
+    const client = createClient(sbUrl, sbApiKey)
+    const embeddings = new OpenAIEmbeddings({openAIApiKey})
+
+    const vectorStore = new SupabaseVectorStore(embeddings, {client, tableName: 'documents', queryName: 'match_documents'})
+    const retriever = vectorStore.asRetriever()
+
+
+
+
+    const issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
+    const issue_chain = issue_prompt.pipe(llm).pipe(new StringOutputParser())
+    // const response2 = await retriever.invoke('Issue')
+    const response = await issue_chain.invoke({issue: "All chains."})
+    console.log(response)
+    // console.log('response 2: ', response2)
+}

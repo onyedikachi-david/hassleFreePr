@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.4",
+    "json2md": "^2.0.0",
     "langchain": "^0.0.189",
     "openai": "^4.19.0",
     "probot": "^12.2.4"

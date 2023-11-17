@@ -8,9 +8,7 @@
 const getRepoIssues = require("./utils");
 
 const fs = require("fs");
-// const {getRouter} = require("probot/lib/get-router");
 module.exports = (app) => {
-  // Your code here
   app.log.info("Yay, the app was loaded!");
 
   app.on("installation.created", async (context) => {

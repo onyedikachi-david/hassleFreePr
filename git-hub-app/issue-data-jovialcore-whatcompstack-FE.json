@@ -1,0 +1,65 @@
+[
+  {
+    "id": 1999744044,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/issues/9",
+    "title": "Routing in vuejs",
+    "body": "The first route - home page works well but the routing to other pages from links displays weirdly",
+    "state": "open"
+  },
+  {
+    "id": 1999740780,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/issues/8",
+    "title": "Fix alignment with modals",
+    "body": "Modals alignment are disorganized or button link are not showing up",
+    "state": "open"
+  },
+  {
+    "id": 1668312039,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/7",
+    "title": "Dev",
+    "body": null,
+    "state": "closed"
+  },
+  {
+    "id": 1666975344,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/6",
+    "title": "Chidi dev",
+    "body": null,
+    "state": "closed"
+  },
+  {
+    "id": 1656117658,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/5",
+    "title": "on this day, we bought a domain name",
+    "body": null,
+    "state": "closed"
+  },
+  {
+    "id": 1655944515,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/4",
+    "title": "Search feature Now working ",
+    "body": "This update solves the bug with search feature not work. Please see comits for full details",
+    "state": "closed"
+  },
+  {
+    "id": 1648018112,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/3",
+    "title": "Dev",
+    "body": null,
+    "state": "closed"
+  },
+  {
+    "id": 1642456014,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/2",
+    "title": "Dev",
+    "body": null,
+    "state": "closed"
+  },
+  {
+    "id": 1620135497,
+    "html_url": "https://github.com/jovialcore/whatcompstack-FE/pull/1",
+    "title": "started the real structure",
+    "body": null,
+    "state": "closed"
+  }
+]

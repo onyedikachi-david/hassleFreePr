@@ -77,10 +77,11 @@ module.exports = async function aiAssistant() {
 
 
 
-    const issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
-    const issue_chain = issue_prompt.pipe(llm).pipe(new StringOutputParser())
-    // const response2 = await retriever.invoke('Issue')
-    const response = await issue_chain.invoke({issue: "All chains."})
+    const simplify_issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
+    const simplify_issue_chain = simplify_issue_prompt.pipe(llm).pipe(new StringOutputParser())
+    const response2 = await retriever.invoke('Issue')
+    const response = await simplify_issue_chain.invoke({issue: "All chains."})
     console.log(response)
-    // console.log('response 2: ', response2)
+    console.log('response 2: ', response2)
 }
+

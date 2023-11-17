@@ -36,8 +36,7 @@ module.exports = async function getRepoIssues (owner, repo) {
             'html_url': issue['html_url'],
             'title': issue['title'],
             "body": issue["body"],
-            'user': issue['user']['login'],
-            'created_at': issue['created_at']
+            "state": issue["state"],
         }
         list_of_issues_details = list_of_issues_details.concat(list_of_issues_detail)
     }
@@ -45,7 +44,7 @@ module.exports = async function getRepoIssues (owner, repo) {
     // Save the data to a JSON file
     fs.writeFileSync(`issue-data-${owner}-${repo}.json`, JSON.stringify(list_of_issues_details, null, 2));
 
-    const loader = new JSONLoader('issue-data-' + owner + '-' + repo + '.json', ['/html_url', '/title', '/body', '/user']);
+    const loader = new JSONLoader('issue-data-' + owner + '-' + repo + '.json', ['/html_url', '/title', '/body', '/user', '/state']);
     const docs = await loader.load();
     // console.log(docs)
     // console.log(json2md(JSON.stringify(list_of_issues_details)));
@@ -56,16 +55,16 @@ module.exports = async function getRepoIssues (owner, repo) {
     });
     const output = await splitter.createDocuments([text]);
 
-    // console.log(output);
-    // const text_splitter = new RecursiveCharacterTextSplitter()
+    console.log(output);
+    const text_splitter = new RecursiveCharacterTextSplitter()
     // const output = await text_splitter.createDocuments(list_of_issues_details)
     // console.log(output)
 
-    // const sbApiKey = process.env.SUPABASE_API_KEY;
-    // const sbUrl = process.env.SUPABASE_URL;
-    // const openAIApiKey = process.env.OPENAI_API_KEY;
-    // const client = createClient(sbUrl, sbApiKey)
-    // await SupabaseVectorStore.fromDocuments(output, new OpenAIEmbeddings({openAIApiKey}), {client, tableName: 'documents',})
+    const sbApiKey = process.env.SUPABASE_API_KEY;
+    const sbUrl = process.env.SUPABASE_URL;
+    const openAIApiKey = process.env.OPENAI_API_KEY;
+    const client = createClient(sbUrl, sbApiKey)
+    await SupabaseVectorStore.fromDocuments(output, new OpenAIEmbeddings({openAIApiKey}), {client, tableName: 'documents',})
     await aiAssistant()
 }
 

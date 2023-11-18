@@ -62,7 +62,7 @@ export default function Home() {
                   </Button>
                 </div>
                 <div className="mx-auto lg:order-last">
-                  <img
+                  <Image
                       alt="Hero"
                       className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full"
                       height="338"
@@ -85,7 +85,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-                <img
+                <Image
                     alt="Feature"
                     className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full"
                     height="338"
@@ -138,7 +138,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-                <img
+                <Image
                     alt="Benefits"
                     className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
                     height="310"
@@ -190,7 +190,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-                <img
+                <Image
                     alt="Testimonials"
                     className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full"
                     height="310"

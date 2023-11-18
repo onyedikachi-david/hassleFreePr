@@ -5,6 +5,7 @@ const {RunnablePassthrough, RunnableSequence} = require("langchain/schema/runnab
 const {createClient} = require("@supabase/supabase-js");
 const {SupabaseVectorStore} = require("langchain/vectorstores/supabase");
 const {OpenAIEmbeddings} = require("langchain/embeddings/openai");
+const { RetrievalQAChain, loadQARefineChain } = require("langchain/chains");
 
 const simplifyIssueTemplate = `
   Given an issue:
@@ -25,7 +26,7 @@ const issueTemplate = `
 
   Check if this issue exists in the context.
 
-  If it does:
+  If it does, check if there is a pull request that closes it:
     - Give a simplified Markdown response with:
       - [Issue title](Issue URL)
 
@@ -62,7 +63,7 @@ const prTemplate = `
 const openAIApiKey = process.env.OPENAI_API_KEY
 const llm = new ChatOpenAI({ openAIApiKey })
 
-module.exports = async function aiAssistant() {
+module.exports = async function aiAssistant(issue_body) {
 
     // console.log(response)
     const sbApiKey = process.env.SUPABASE_API_KEY;
@@ -72,16 +73,27 @@ module.exports = async function aiAssistant() {
     const embeddings = new OpenAIEmbeddings({openAIApiKey})
 
     const vectorStore = new SupabaseVectorStore(embeddings, {client, tableName: 'documents', queryName: 'match_documents'})
-    const retriever = vectorStore.asRetriever()
+    // const retriever = vectorStore.asRetriever()
+    //
+    //
+    //
+    //
+    // const simplify_issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
+    // const simplify_issue_chain = simplify_issue_prompt.pipe(llm).pipe(new StringOutputParser())
+    // const response2 = await retriever.invoke('Issue')
+    // const response = await simplify_issue_chain.invoke({issue: "All chains."})
+    // console.log(response)
+    // console.log('response 2: ', response2)
 
 
+    const chain = new RetrievalQAChain({
+        combineDocumentsChain: loadQARefineChain(llm),
+        retriever: vectorStore.asRetriever(),
+    });
 
-
-    const simplify_issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
-    const simplify_issue_chain = simplify_issue_prompt.pipe(llm).pipe(new StringOutputParser())
-    const response2 = await retriever.invoke('Issue')
-    const response = await simplify_issue_chain.invoke({issue: "All chains."})
-    console.log(response)
-    console.log('response 2: ', response2)
+    const result = await chain.call({
+        query: 'started the real structure\'',
+    });
+    console.log(result)
 }
 

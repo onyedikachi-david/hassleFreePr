@@ -54,7 +54,7 @@ describe("My Probot app", () => {
       })
       .reply(200);
 
-    // Receive a webhook event
+    // Receive a webhooks event
     await probot.receive({ name: "issues", payload });
 
     expect(mock.pendingMocks()).toStrictEqual([]);

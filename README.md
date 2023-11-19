@@ -38,9 +38,11 @@ hasselFreePr runs in the background monitoring GitHub webhooks. Configured with 
 **Contributing**
 
 We welcome contributions! Please open issues for any feature requests or bugs. Pull requests are appreciated.
+
 **License**
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 **Contact**
 
 Contact [my email](davidanyatonwu@gmail.com) with any questions, issues, or suggestions.

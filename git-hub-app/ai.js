@@ -7,6 +7,10 @@ const {SupabaseVectorStore} = require("langchain/vectorstores/supabase");
 const {OpenAIEmbeddings} = require("langchain/embeddings/openai");
 const { RetrievalQAChain, loadQARefineChain } = require("langchain/chains");
 
+
+function combineDocuments(docs){
+    return docs.map((doc)=>doc.pageContent).join('\n\n')
+}
 const simplifyIssueTemplate = `
   Given an issue:
 
@@ -19,6 +23,8 @@ const simplifyIssueTemplate = `
   
   Simplified issue:
 `
+
+const simplifyIssuePrompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
 const issueTemplate = `
   You are an AI assistant helping out in GitHub issues.
 
@@ -29,6 +35,7 @@ const issueTemplate = `
   If it does, check if there is a pull request that closes it:
     - Give a simplified Markdown response with:
       - [Issue title](Issue URL)
+      - Summary of the issue body
 
   If it does not:
     - Do not add a comment
@@ -37,6 +44,8 @@ const issueTemplate = `
 
   Response:
 `
+
+const issuePrompt = PromptTemplate.fromTemplate(issueTemplate)
 
 const prTemplate = `
   You are an AI assistant helping out with GitHub pull requests.
@@ -57,15 +66,13 @@ const prTemplate = `
   Response:  
 `
 
-// const pr_prompt = PromptTemplate(pr_template)
-
+const pr_prompt = PromptTemplate.fromTemplate(prTemplate)
 
 const openAIApiKey = process.env.OPENAI_API_KEY
 const llm = new ChatOpenAI({ openAIApiKey })
 
 module.exports = async function aiAssistant(issue_body) {
 
-    // console.log(response)
     const sbApiKey = process.env.SUPABASE_API_KEY;
     const sbUrl = process.env.SUPABASE_URL;
     const openAIApiKey = process.env.OPENAI_API_KEY;
@@ -73,27 +80,33 @@ module.exports = async function aiAssistant(issue_body) {
     const embeddings = new OpenAIEmbeddings({openAIApiKey})
 
     const vectorStore = new SupabaseVectorStore(embeddings, {client, tableName: 'documents', queryName: 'match_documents'})
-    // const retriever = vectorStore.asRetriever()
-    //
-    //
-    //
-    //
-    // const simplify_issue_prompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
-    // const simplify_issue_chain = simplify_issue_prompt.pipe(llm).pipe(new StringOutputParser())
-    // const response2 = await retriever.invoke('Issue')
-    // const response = await simplify_issue_chain.invoke({issue: "All chains."})
-    // console.log(response)
-    // console.log('response 2: ', response2)
+    const retriever = vectorStore.asRetriever()
 
+    const simplifyChain = RunnableSequence.from([simplifyIssuePrompt, llm, new StringOutputParser()])
+    const issueChain = RunnableSequence.from([issuePrompt, llm, new StringOutputParser()])
 
-    const chain = new RetrievalQAChain({
-        combineDocumentsChain: loadQARefineChain(llm),
-        retriever: vectorStore.asRetriever(),
-    });
+    const retrievalChain = RunnableSequence.from([
+        prevIssue => prevIssue.standalone_issue,
+        retriever,
+        combineDocuments
+    ])
 
-    const result = await chain.call({
-        query: 'started the real structure\'',
+    const chain = RunnableSequence.from([
+        {
+            standalone_issue: simplifyChain,
+            original_input: new RunnablePassthrough()
+        },
+        {
+            context: retrievalChain,
+            issue: ({original_input}) => original_input.issue
+        },
+        issueChain
+    ])
+
+    const result = await chain.invoke({
+        issue: issue_body,
     });
     console.log(result)
+    return result
 }
 

@@ -46,14 +46,13 @@ module.exports = async function getRepoIssues (owner, repo) {
 
     const loader = new JSONLoader('issue-data-' +owner + '-' + repo + '.json');
     const docs = await loader.load();
-    console.log(docs)
 
     /// Embed and Upload to Supabase
-    // const sbApiKey = process.env.SUPABASE_API_KEY;
-    // const sbUrl = process.env.SUPABASE_URL;
-    // const openAIApiKey = process.env.OPENAI_API_KEY;
-    // const client = createClient(sbUrl, sbApiKey)
-    // await SupabaseVectorStore.fromDocuments(output, new OpenAIEmbeddings({openAIApiKey}), {client, tableName: 'documents',})
-    await aiAssistant()
+    const sbApiKey = process.env.SUPABASE_API_KEY;
+    const sbUrl = process.env.SUPABASE_URL;
+    const openAIApiKey = process.env.OPENAI_API_KEY;
+    const client = createClient(sbUrl, sbApiKey)
+    await SupabaseVectorStore.fromDocuments(docs, new OpenAIEmbeddings({openAIApiKey}), {client, tableName: 'documents',})
+    // await aiAssistant('An issue')
 }
 

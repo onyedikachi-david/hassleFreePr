@@ -21,7 +21,7 @@ hasselFreePr is a GitHub application built to optimize issue and pull request wo
 ********************************
 **Installation**
 ```shell
-git clone https://github.com/username/hasselFreePr.git
+git clone https://github.com/onyedikachi-david/hasselFreePr.git
 ```
 ```shell
 cd hasselFreePr

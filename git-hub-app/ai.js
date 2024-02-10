@@ -1,15 +1,17 @@
-const {ChatOpenAI} = require('langchain/chat_models/openai')
-const { PromptTemplate } = require('langchain/prompts')
-const {StringOutputParser} = require('langchain/schema/output_parser')
-const {RunnablePassthrough, RunnableSequence} = require("langchain/schema/runnable")
-const {createClient} = require("@supabase/supabase-js");
-const {SupabaseVectorStore} = require("langchain/vectorstores/supabase");
-const {OpenAIEmbeddings} = require("langchain/embeddings/openai");
+const { ChatOpenAI } = require("langchain/chat_models/openai");
+const { PromptTemplate } = require("langchain/prompts");
+const { StringOutputParser } = require("langchain/schema/output_parser");
+const {
+  RunnablePassthrough,
+  RunnableSequence,
+} = require("langchain/schema/runnable");
+const { createClient } = require("@supabase/supabase-js");
+const { SupabaseVectorStore } = require("langchain/vectorstores/supabase");
+const { OpenAIEmbeddings } = require("langchain/embeddings/openai");
 const { RetrievalQAChain, loadQARefineChain } = require("langchain/chains");
 
-
-function combineDocuments(docs){
-    return docs.map((doc)=>doc.pageContent).join('\n\n')
+function combineDocuments(docs) {
+  return docs.map((doc) => doc.pageContent).join("\n\n");
 }
 const simplifyIssueTemplate = `
   Given an issue:
@@ -22,9 +24,9 @@ const simplifyIssueTemplate = `
   - issue body
   
   Simplified issue:
-`
+`;
 
-const simplifyIssuePrompt = PromptTemplate.fromTemplate(simplifyIssueTemplate)
+const simplifyIssuePrompt = PromptTemplate.fromTemplate(simplifyIssueTemplate);
 const issueTemplate = `
   You are an AI assistant helping out in GitHub issues.
 
@@ -43,9 +45,9 @@ const issueTemplate = `
   Context: {context}
 
   Response:
-`
+`;
 
-const issuePrompt = PromptTemplate.fromTemplate(issueTemplate)
+const issuePrompt = PromptTemplate.fromTemplate(issueTemplate);
 
 const prTemplate = `
   You are an AI assistant helping out with GitHub pull requests.
@@ -64,49 +66,60 @@ const prTemplate = `
   Context: {context}
 
   Response:  
-`
+`;
 
-const pr_prompt = PromptTemplate.fromTemplate(prTemplate)
+const pr_prompt = PromptTemplate.fromTemplate(prTemplate);
 
-const openAIApiKey = process.env.OPENAI_API_KEY
-const llm = new ChatOpenAI({ openAIApiKey })
+const openAIApiKey = process.env.OPENAI_API_KEY;
+const llm = new ChatOpenAI({ openAIApiKey });
 
+// Main AI utility function
 module.exports = async function aiAssistant(issue_body) {
+  const sbApiKey = process.env.SUPABASE_API_KEY;
+  const sbUrl = process.env.SUPABASE_URL;
+  const openAIApiKey = process.env.OPENAI_API_KEY;
+  const client = createClient(sbUrl, sbApiKey);
+  const embeddings = new OpenAIEmbeddings({ openAIApiKey });
 
-    const sbApiKey = process.env.SUPABASE_API_KEY;
-    const sbUrl = process.env.SUPABASE_URL;
-    const openAIApiKey = process.env.OPENAI_API_KEY;
-    const client = createClient(sbUrl, sbApiKey)
-    const embeddings = new OpenAIEmbeddings({openAIApiKey})
+  const vectorStore = new SupabaseVectorStore(embeddings, {
+    client,
+    tableName: "documents",
+    queryName: "match_documents",
+  });
+  const retriever = vectorStore.asRetriever();
 
-    const vectorStore = new SupabaseVectorStore(embeddings, {client, tableName: 'documents', queryName: 'match_documents'})
-    const retriever = vectorStore.asRetriever()
+  const simplifyChain = RunnableSequence.from([
+    simplifyIssuePrompt,
+    llm,
+    new StringOutputParser(),
+  ]);
+  const issueChain = RunnableSequence.from([
+    issuePrompt,
+    llm,
+    new StringOutputParser(),
+  ]);
 
-    const simplifyChain = RunnableSequence.from([simplifyIssuePrompt, llm, new StringOutputParser()])
-    const issueChain = RunnableSequence.from([issuePrompt, llm, new StringOutputParser()])
+  const retrievalChain = RunnableSequence.from([
+    (prevIssue) => prevIssue.standalone_issue,
+    retriever,
+    combineDocuments,
+  ]);
 
-    const retrievalChain = RunnableSequence.from([
-        prevIssue => prevIssue.standalone_issue,
-        retriever,
-        combineDocuments
-    ])
+  const chain = RunnableSequence.from([
+    {
+      standalone_issue: simplifyChain,
+      original_input: new RunnablePassthrough(),
+    },
+    {
+      context: retrievalChain,
+      issue: ({ original_input }) => original_input.issue,
+    },
+    issueChain,
+  ]);
 
-    const chain = RunnableSequence.from([
-        {
-            standalone_issue: simplifyChain,
-            original_input: new RunnablePassthrough()
-        },
-        {
-            context: retrievalChain,
-            issue: ({original_input}) => original_input.issue
-        },
-        issueChain
-    ])
-
-    const result = await chain.invoke({
-        issue: issue_body,
-    });
-    console.log(result)
-    return result
-}
-
+  const result = await chain.invoke({
+    issue: issue_body,
+  });
+  console.log(result);
+  return result;
+};
